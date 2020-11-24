@@ -1,0 +1,29 @@
+version: '3'
+services:
+    web:
+        image: httpd
+        volumes:
+            - "./etc/apache2/mysite.conf:/usr/local/apache2/conf/mysite.conf"
+            - "./web:/usr/local/apache2/htdocs"
+        ports:
+            - "8000:80"
+        restart: always
+    php:
+        image: php
+        restart: always
+    mysqldb:
+        image: mysql:${MYSQL_VERSION}
+        container_name: ${MYSQL_HOST}
+        restart: always
+        env_file:
+            - ".env"
+        environment:
+            - MYSQL_DATABASE=${MYSQL_DATABASE}
+            - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+            - MYSQL_USER=${MYSQL_USER}
+            - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+        ports:
+            - "8989:3306"
+        volumes:
+            - "./data/db/mysql:/var/lib/mysql"
+
