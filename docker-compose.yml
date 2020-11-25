@@ -1,15 +1,13 @@
 version: '3'
 services:
     web:
-        image: httpd
+        image: php:7.4-apache
+        container_name: php-apache
         volumes:
-            - "./etc/apache2/mysite.conf:/usr/local/apache2/conf/mysite.conf"
-            - "./web:/usr/local/apache2/htdocs"
+            - "./etc/apache2/mysite.conf:/etc/apache2/sites-enabled/mysite.conf"
+            - "./web:/var/www/html"
         ports:
             - "8000:80"
-        restart: always
-    php:
-        image: php
         restart: always
     mysqldb:
         image: mysql:${MYSQL_VERSION}
@@ -26,4 +24,14 @@ services:
             - "8989:3306"
         volumes:
             - "./data/db/mysql:/var/lib/mysql"
-
+    phpmyadmin:
+        image: phpmyadmin/phpmyadmin
+        container_name: phpmyadmin
+        ports:
+            - "8080:80"
+        environment:
+            - PMA_ARBITRARY=1
+            - PMA_HOST=${MYSQL_HOST}
+        restart: always
+        depends_on:
+            - mysqldb
